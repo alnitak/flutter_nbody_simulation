@@ -1,0 +1,55 @@
+group 'com.bavagnoli.n_body'
+version '1.0'
+
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath 'com.android.tools.build:gradle:7.2.0'
+    }
+}
+
+rootProject.allprojects {
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion 31
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    defaultConfig {
+        minSdkVersion 16
+
+        externalNativeBuild {
+            cmake {
+                // using clang
+                arguments '-DBUILD_TESTING=OFF', '-DANDROID_TOOLCHAIN=clang', '-DANDROID_STL=c++_static', '-DCMAKE_VERBOSE_MAKEFILE=ON'
+                cppFlags "-std=c++11 -fexceptions -frtti"
+//                version "3.10.2"
+            }
+        }
+
+        packagingOptions{
+            doNotStrip "**/*.so"
+        }
+    }
+
+    externalNativeBuild {
+        cmake {
+            path "CMakeLists.txt"
+//            version "3.10.2"
+        }
+    }
+}

@@ -1,0 +1,27 @@
+name: n_body_example
+description: Demonstrates how to use the n_body plugin.
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+
+environment:
+  sdk: '>=2.19.5 <3.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  n_body:
+    path: ../
+
+  cupertino_icons: ^1.0.2
+
+  flutter_riverpod: ^2.3.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^2.0.1
+
+flutter:
+  uses-material-design: true
+

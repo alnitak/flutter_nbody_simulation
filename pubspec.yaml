@@ -1,0 +1,66 @@
+name: n_body
+description: N-Body simulation to test performances of c/c++ using FFI
+version: 0.0.1+1
+homepage:
+
+environment:
+  sdk: '>=2.19.5 <3.0.0'
+  flutter: ">=2.5.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  plugin_platform_interface: ^2.0.2
+
+  #https://pub.dev/packages/ffi
+  ffi: 2.0.1
+
+  vector_math: ^2.1.4
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^2.0.1
+
+  #https://pub.dev/packages/ffigen
+  # dart run ffigen
+  ffigen: ^7.2.4
+
+ffigen:
+  output: './lib/n_body_ffi.dart'
+  name: 'NBodyFfi'
+  description: 'Bindings to NBody'
+  headers:
+    entry-points:
+      - './ios/Classes/compute.h'
+    include-directives:
+      - '**compute.h'
+  unnamed-enums:
+    include:
+      - 'CX_.*'
+    exclude:
+      - '.*Flag'
+    rename:
+      'CXType_(.*)': '$1'
+
+
+flutter:
+  plugin:
+    platforms:
+      android:
+        package: com.bavagnoli.n_body
+        pluginClass: NBodyPlugin
+      ios:
+        pluginClass: NBodyPlugin
+      linux:
+        pluginClass: NBodyPlugin
+      macos:
+        pluginClass: NBodyPlugin
+      windows:
+        pluginClass: NBodyPluginCApi
+
+  # To add assets to your plugin package, add an assets section, like this:
+  # assets:
+  #   - images/a_dot_burr.jpeg
+  #   - images/a_dot_ham.jpeg
+  #
