@@ -10,6 +10,8 @@ N-body simulations are simple in principle but the computational complexity here
 Running the example in debug mode the FPS seem to be almost the same, but running it in release mode, it's 
 noticeable that c/c++ it's even 6 times faster with 2500 bodies (Linux powered with an AMD 5950x and 1 thread as the main Flutter isolate).
 
+https://user-images.githubusercontent.com/192827/229293021-2ea7c6ef-09b6-4902-bc6c-0a2a00bcd4f4.mp4
+
 Some investigation should be made to see if some Dart code can be optimized and make also some profile.
 
 This code works on **Linux**, **Android** and **Windows**. Shouldn't be a pain to add c/c++ code to iOS and MacOS (it is stored into ./ios/Classes), ***please help!*** :)
@@ -19,3 +21,6 @@ This code works on **Linux**, **Android** and **Windows**. Shouldn't be a pain t
 - LMB add "star" with 80K mass
 - CMB add "black hole" with 10M
 - RMB stars and black holes are removed
+
+https://user-images.githubusercontent.com/192827/229293063-87066054-4fa5-4369-8600-05d305f487ae.mp4
+
