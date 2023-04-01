@@ -22,5 +22,5 @@ This code works on **Linux**, **Android** and **Windows**. Shouldn't be a pain t
 - CMB add "black hole" with 10M
 - RMB stars and black holes are removed
 
-https://user-images.githubusercontent.com/192827/229293063-87066054-4fa5-4369-8600-05d305f487ae.mp4
+https://user-images.githubusercontent.com/192827/229293393-4ffd4e15-1d53-4c70-acca-7729ffbc797a.mp4
 
