@@ -17,7 +17,7 @@ class NBodyController {
     ffi.DynamicLibrary nativeLib = Platform.isAndroid
         ? ffi.DynamicLibrary.open("libn_body_plugin.so")
         : (Platform.isWindows
-            ? ffi.DynamicLibrary.open("libn_body_plugin.dll")
+            ? ffi.DynamicLibrary.open("n_body_plugin.dll")
             : ffi.DynamicLibrary.process());
     nbodyFfi = NBodyFfi.fromLookup(nativeLib.lookup);
   }
