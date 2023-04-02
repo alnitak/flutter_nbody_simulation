@@ -11,10 +11,10 @@ NBody nBody;
 void init(int shape,
           int nBodies,
           double mass_min, double mass_max,
-          double pos_min_x, double pos_min_y, double pos_min_z,
-          double pos_max_x, double pos_max_y, double pos_max_z,
-          double spin_min_x, double spin_min_y, double spin_min_z,
-          double spin_max_x, double spin_max_y, double spin_max_z)
+          double pos_min_x, double pos_min_y,
+          double pos_max_x, double pos_max_y,
+          double spin_min_x, double spin_min_y,
+          double spin_max_x, double spin_max_y)
 {
     nBody.bodiesList.clear();
     for (int i = 0; i < nBodies; ++i)
@@ -22,22 +22,22 @@ void init(int shape,
         nBody.addRandomBody(
             (BodyShape)shape,
             mass_min, mass_max,
-            pos_min_x, pos_min_y, pos_min_z,
-            pos_max_x, pos_max_y, pos_max_z,
-            spin_min_x, spin_min_y, spin_min_z,
-            spin_max_x, spin_max_y, spin_max_z );
+            pos_min_x, pos_min_y,
+            pos_max_x, pos_max_y,
+            spin_min_x, spin_min_y,
+            spin_max_x, spin_max_y);
     }
 }
 
 void setDeltaT(double deltaT) { nBody.setDeltaT(deltaT); }
 
 void addBody(double mass,
-             double pos_x, double pos_y, double pos_z,
-             double spin_x, double spin_y, double spin_z)
+             double pos_x, double pos_y,
+             double spin_x, double spin_y)
 {
     nBody.addBody(mass,
-                  pos_x, pos_y, pos_z,
-                  spin_x, spin_y, spin_z);
+                  pos_x, pos_y,
+                  spin_x, spin_y);
 }
 
 void removeBodiesWithMassRange(double min, double max)

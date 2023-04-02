@@ -13,10 +13,8 @@ typedef struct BodyFfi
   double mass;
   double pos_x;
   double pos_y;
-  double pos_z;
   double spin_x;
   double spin_y;
-  double spin_z;
   double force;
 } BodyFfi;
 
@@ -25,16 +23,16 @@ typedef struct BodyFfi
 FFI void init(int shape,
           int nBodies,
           double mass_min, double mass_max,
-          double pos_min_x, double pos_min_y, double pos_min_z,
-          double pos_max_x, double pos_max_y, double pos_max_z,
-          double spin_min_x, double spin_min_y, double spin_min_z,
-          double spin_max_x, double spin_max_y, double spin_max_z);
+          double pos_min_x, double pos_min_y,
+          double pos_max_x, double pos_max_y,
+          double spin_min_x, double spin_min_y,
+          double spin_max_x, double spin_max_y);
 
 FFI void setDeltaT(double deltaT);
 
 FFI void addBody(double mass,
-             double pos_x, double pos_y, double pos_z,
-             double spin_x, double spin_y, double spin_z);
+             double pos_x, double pos_y,
+             double spin_x, double spin_y);
 
 FFI void removeBodiesWithMassRange(double min, double max);
 
