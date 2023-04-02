@@ -8,13 +8,15 @@ N-Body simulation to test performances of c/c++ using FFI
 N-body simulations are simple in principle but the computational complexity here is O(N^2).
 
 Running the example in debug mode the FPS seem to be almost the same, but running it in release mode, it's 
-noticeable that c/c++ it's even 6 times faster with 2500 bodies (Linux powered with an AMD 5950x and 1 thread as the main Flutter isolate).
+noticeable that c/c++ it's even 6 times faster[¹] with 2500 bodies (Linux powered with an AMD 5950x and 1 thread as the main Flutter isolate).
 
 https://user-images.githubusercontent.com/192827/229293021-2ea7c6ef-09b6-4902-bc6c-0a2a00bcd4f4.mp4
 
 Some investigation should be made to see if some Dart code can be optimized and make also some profile.
 
 This code works on **Linux**, **Android** and **Windows**. Shouldn't be a pain to add c/c++ code to iOS and MacOS (it is stored into ./ios/Classes), ***please help!*** :)
+
+[¹] by not using Vector in Flutter side, now it is 2 time faster!
 
 #### Note
 
