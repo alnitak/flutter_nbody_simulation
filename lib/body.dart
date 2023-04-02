@@ -7,14 +7,14 @@ import 'draw_n_body.dart';
 
 class Body {
   double mass;
-  Vector3 pos;
-  Vector3 velocity;
+  Vector2 pos;
+  Vector2 spin;
   double force;
 
   Body({
     required this.mass,
     required this.pos,
-    required this.velocity,
+    required this.spin,
     required this.force,
   });
 }
@@ -54,12 +54,11 @@ class NBody {
         bodiesList.add(
           Body(
             mass: m,
-            pos: Vector3(
+            pos: Vector2(
               range(rect.left, rect.left + rect.width),
               range(rect.top, rect.top + rect.height),
-              0.0,
             ),
-            velocity: Vector3.zero(),
+            spin: Vector2.zero(),
             force: 0.0,
           ),
         );
@@ -81,8 +80,8 @@ class NBody {
         bodiesList.add(
           Body(
             mass: m,
-            pos: Vector3(px, py, 0.0),
-            velocity: Vector3(sx, sy, 0.0),
+            pos: Vector2(px, py),
+            spin: Vector2(sx, sy),
             force: 0.0,
           ),
         );
@@ -91,32 +90,54 @@ class NBody {
   }
 
   /// calculate new velocities and positions
+  /// Not using Vector2 to be the same as C side
   updateParams() {
+    double distX = 0;
+    double distY = 0;
     double dist = 0;
-    double Fi = 0;
-    double Fj = 0;
-    List<Vector3> accel =
-        List.generate(bodiesList.length, (index) => Vector3.zero());
+    double fI = 0;
+    double fJ = 0;
+    int bodiesCount = bodiesList.length;
+    List<double> accelX = List.generate(bodiesCount, (index) => 0.0);
+    List<double> accelY = List.generate(bodiesCount, (index) => 0.0);
 
-    /// calculate velocity
-    /// F = G(m1m2)/R^2
-    for (int i = 0; i < bodiesList.length; ++i) {
-      for (int j = i + 1; j < bodiesList.length; ++j) {
-        dist = bodiesList[i].pos.distanceTo(bodiesList[j].pos);
-        Fi = bodiesList[j].mass / (dist * dist);
-        Fj = bodiesList[i].mass / (dist * dist);
-        accel[i] -= (bodiesList[i].pos - bodiesList[j].pos) * Fi;
-        accel[j] += (bodiesList[i].pos - bodiesList[j].pos) * Fj;
-        bodiesList[i].force += Fj;
-        bodiesList[j].force += Fi;
-      }
-      bodiesList[i].force /= bodiesList.length * 10;
+    // calculate new velocity
+    /// F = G(m1m2)/R^3 (for 3D)
+    /// F = G(m1m2)/R^2 (for 2D)
+    for (int i = 0; i < bodiesList.length; ++i)
+    {
+        bodiesList[i].force = 0.0;
+        for (int j = i + 1; j < bodiesList.length; ++j)
+        {
+            distX = bodiesList[i].pos.x - bodiesList[j].pos.x;
+            distY = bodiesList[i].pos.y - bodiesList[j].pos.y;
+            dist = sqrt(distX * distX + distY * distY);
+
+            fI = bodiesList[j].mass / (dist * dist);
+            fJ = bodiesList[i].mass / (dist * dist);
+
+            accelX[i] -= distX * fI;
+            accelY[i] -= distY * fI;
+
+            accelX[j] += distX * fJ;
+            accelY[j] += distY * fJ;
+
+            bodiesList[i].force += fJ;
+            bodiesList[j].force += fI;
+        }
+
+        bodiesList[i].force /= bodiesCount * 10;
     }
+    // std::cout << "FORCE  " << bodiesList[0].force << std::endl;
 
-    /// calculate position
-    for (int i = 0; i < bodiesList.length; ++i) {
-      bodiesList[i].velocity += accel[i] * deltaT;
-      bodiesList[i].pos += bodiesList[i].velocity * deltaT;
+    /// calculate new position
+    for (int i = 0; i < bodiesCount; ++i)
+    {
+        bodiesList[i].spin.x += accelX[i] * deltaT;
+        bodiesList[i].spin.y += accelY[i] * deltaT;
+
+        bodiesList[i].pos.x += bodiesList[i].spin.x * deltaT;
+        bodiesList[i].pos.y += bodiesList[i].spin.y * deltaT;
     }
   }
 }

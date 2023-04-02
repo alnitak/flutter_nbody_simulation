@@ -12,6 +12,11 @@ class BodyPainter extends CustomPainter {
     required this.bodiesList,
   });
 
+  /// the force from 0 to [a] has a gradient color
+  /// the force >[a] has another gradient
+  final a = 0.3;
+  final b = 1.0;
+
   @override
   void paint(Canvas canvas, Size size) {
     var paint = Paint();
@@ -19,9 +24,13 @@ class BodyPainter extends CustomPainter {
     for (int i = 0; i < bodiesList.length; ++i) {
       if (bodiesList[i].mass <= 20000) {
         /// draw bodies
-        paint.color = Color.lerp(
-                Colors.redAccent, Colors.yellowAccent, bodiesList[i].force) ??
-            Colors.cyanAccent;
+        if (bodiesList[i].force <= a) {
+          paint.color = Color.lerp(
+              Colors.redAccent, Colors.yellowAccent, bodiesList[i].force / a)!;
+        } else {
+          paint.color = Color.lerp(
+              Colors.yellowAccent, Colors.white, bodiesList[i].force / b)!;
+        }
         canvas.drawCircle(
           Offset(bodiesList[i].pos.x, bodiesList[i].pos.y),
           (10 * bodiesList[i].mass) / 20000,
@@ -60,6 +69,11 @@ class BodyPainterFfi extends CustomPainter {
     required this.nBodies,
   });
 
+  /// the force from 0 to [a] has a gradient color
+  /// the force >[a] has another gradient
+  final a = 0.3;
+  final b = 1.0;
+
   @override
   void paint(Canvas canvas, Size size) {
     var paint = Paint();
@@ -67,9 +81,13 @@ class BodyPainterFfi extends CustomPainter {
     for (int i = 0; i < nBodies.value; ++i) {
       if (bodiesList[i].mass <= 20000) {
         /// draw bodies
-        paint.color = Color.lerp(
-                Colors.redAccent, Colors.yellowAccent, bodiesList[i].force) ??
-            Colors.purple;
+        if (bodiesList[i].force <= a) {
+          paint.color = Color.lerp(
+              Colors.redAccent, Colors.yellowAccent, bodiesList[i].force / a)!;
+        } else {
+          paint.color = Color.lerp(
+              Colors.yellowAccent, Colors.white, bodiesList[i].force / b)!;
+        }
         canvas.drawCircle(
           Offset(bodiesList[i].pos_x, bodiesList[i].pos_y),
           (10 * bodiesList[i].mass) / 20000,

@@ -82,8 +82,8 @@ class _DrawNBodyState extends State<DrawNBody> {
         body!.bodiesList.add(
           Body(
             mass: 80000.0,
-            pos: Vector3(details.localPosition.dx, details.localPosition.dy, 0),
-            velocity: Vector3.zero(),
+            pos: Vector2(details.localPosition.dx, details.localPosition.dy),
+            spin: Vector2.zero(),
             force: 0.0,
           ),
         );
@@ -97,8 +97,8 @@ class _DrawNBodyState extends State<DrawNBody> {
         body!.bodiesList.add(
           Body(
             mass: 10000000.0,
-            pos: Vector3(details.localPosition.dx, details.localPosition.dy, 0),
-            velocity: Vector3.zero(),
+            pos: Vector2(details.localPosition.dx, details.localPosition.dy),
+            spin: Vector2.zero(),
             force: 0.0,
           ),
         );
@@ -161,10 +161,10 @@ class _DrawNBodyFfiState extends State<DrawNBodyFfi> {
           widget.nBodies,
           minMass,
           maxMass,
-          w * 0.25, h * 0.25, 0,
-          w * 0.75, h * 0.75, 0,
-          0, 0, 0,
-          0, 0, 0,
+          w * 0.25, h * 0.25,
+          w * 0.75, h * 0.75,
+          0, 0,
+          0, 0,
         );
         NBodyController().nbodyFfi.setDeltaT(deltaT);
         stopwatch.start();
@@ -190,14 +190,14 @@ class _DrawNBodyFfiState extends State<DrawNBodyFfi> {
     return GestureDetector(
       onTapDown: (details) {
         NBodyController().nbodyFfi.addBody(80000.0, details.localPosition.dx,
-            details.localPosition.dy, 0, 0, 0, 0);
+            details.localPosition.dy, 0, 0);
       },
       onSecondaryTapDown: (details) {
         NBodyController().nbodyFfi.removeBodiesWithMassRange(10001, 10000000);
       },
       onTertiaryTapDown: (details) {
         NBodyController().nbodyFfi.addBody(10000000.0, details.localPosition.dx,
-            details.localPosition.dy, 0, 0, 0, 0);
+            details.localPosition.dy, 0, 0);
       },
       child: CustomPaint(
         painter: BodyPainterFfi(bodiesList: bodies, nBodies: nBodies),

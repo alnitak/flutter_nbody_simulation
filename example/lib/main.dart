@@ -24,7 +24,8 @@ final deltaTimeProvider = StateProvider<double>((ref) => 0.001);
 final fpsProvider = StateProvider<double>((ref) => 0.0);
 
 /// BodiesShape
-final bodiesShapeProvider = StateProvider<BodiesShape>((ref) => BodiesShape.circle);
+final bodiesShapeProvider =
+    StateProvider<BodiesShape>((ref) => BodiesShape.circle);
 
 void main() {
   NBodyController().initializeNBody();
@@ -267,14 +268,15 @@ class MyHomePage extends ConsumerWidget {
                             value: shape == BodiesShape.rectangle,
                             onChanged: (value) {
                               if (value!) {
-                                ref.read(bodiesShapeProvider.notifier).update((state) => BodiesShape.rectangle);
+                                ref
+                                    .read(bodiesShapeProvider.notifier)
+                                    .update((state) => BodiesShape.rectangle);
                               }
                             },
                           );
                         },
                       ),
                       const Text('rectangle     '),
-
                       Consumer(
                         builder: (_, ref, __) {
                           BodiesShape shape = ref.watch(bodiesShapeProvider);
@@ -282,14 +284,15 @@ class MyHomePage extends ConsumerWidget {
                             value: shape == BodiesShape.circle,
                             onChanged: (value) {
                               if (value!) {
-                                ref.read(bodiesShapeProvider.notifier).update((state) => BodiesShape.circle);
+                                ref
+                                    .read(bodiesShapeProvider.notifier)
+                                    .update((state) => BodiesShape.circle);
                               }
                             },
                           );
                         },
                       ),
                       const Text('circle     '),
-
                     ],
                   ),
                 ],

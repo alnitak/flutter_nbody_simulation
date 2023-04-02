@@ -27,16 +27,12 @@ class NBodyFfi {
     double mass_max,
     double pos_min_x,
     double pos_min_y,
-    double pos_min_z,
     double pos_max_x,
     double pos_max_y,
-    double pos_max_z,
     double spin_min_x,
     double spin_min_y,
-    double spin_min_z,
     double spin_max_x,
     double spin_max_y,
-    double spin_max_z,
   ) {
     return _init(
       shape,
@@ -45,16 +41,12 @@ class NBodyFfi {
       mass_max,
       pos_min_x,
       pos_min_y,
-      pos_min_z,
       pos_max_x,
       pos_max_y,
-      pos_max_z,
       spin_min_x,
       spin_min_y,
-      spin_min_z,
       spin_max_x,
       spin_max_y,
-      spin_max_z,
     );
   }
 
@@ -72,14 +64,10 @@ class NBodyFfi {
               ffi.Double,
               ffi.Double,
               ffi.Double,
-              ffi.Double,
-              ffi.Double,
-              ffi.Double,
-              ffi.Double,
               ffi.Double)>>('init');
   late final _init = _initPtr.asFunction<
       void Function(int, int, double, double, double, double, double, double,
-          double, double, double, double, double, double, double, double)>();
+          double, double, double, double)>();
 
   void setDeltaT(
     double deltaT,
@@ -97,28 +85,24 @@ class NBodyFfi {
     double mass,
     double pos_x,
     double pos_y,
-    double pos_z,
     double spin_x,
     double spin_y,
-    double spin_z,
   ) {
     return _addBody(
       mass,
       pos_x,
       pos_y,
-      pos_z,
       spin_x,
       spin_y,
-      spin_z,
     );
   }
 
   late final _addBodyPtr = _lookup<
       ffi.NativeFunction<
           ffi.Void Function(ffi.Double, ffi.Double, ffi.Double, ffi.Double,
-              ffi.Double, ffi.Double, ffi.Double)>>('addBody');
-  late final _addBody = _addBodyPtr.asFunction<
-      void Function(double, double, double, double, double, double, double)>();
+              ffi.Double)>>('addBody');
+  late final _addBody = _addBodyPtr
+      .asFunction<void Function(double, double, double, double, double)>();
 
   void removeBodiesWithMassRange(
     double min,
@@ -162,16 +146,10 @@ class BodyFfi extends ffi.Struct {
   external double pos_y;
 
   @ffi.Double()
-  external double pos_z;
-
-  @ffi.Double()
   external double spin_x;
 
   @ffi.Double()
   external double spin_y;
-
-  @ffi.Double()
-  external double spin_z;
 
   @ffi.Double()
   external double force;
