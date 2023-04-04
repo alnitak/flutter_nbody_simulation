@@ -17,7 +17,9 @@ Some investigation should be made to see if some Dart code can be optimized and 
 This code works on **Linux**, **Android** and **Windows**. Shouldn't be a pain to add c/c++ code to iOS and MacOS (it is stored into ./ios/Classes), ***please help!*** :)
 
 [¹] by not using Vector on Flutter side (in body.dart updateParams()), now it is 2 time faster!
+
 [²] using Float64List instead of List<double> FPS increased from 13 to 31 in debug mode, but in release mode are about 20!
+
 [³] by removing the use of Vector2 from [Body] class, FPS are now more then expected! The FPS in release mode are almost the same from Flutter and FFI side. And in debug mode are almost the same as in the release mode! (something wrong in vector_math.dart?)
 
 
