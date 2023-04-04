@@ -32,7 +32,7 @@ class BodyPainter extends CustomPainter {
               Colors.yellowAccent, Colors.white, bodiesList[i].force / b)!;
         }
         canvas.drawCircle(
-          Offset(bodiesList[i].pos.x, bodiesList[i].pos.y),
+          Offset(bodiesList[i].posX, bodiesList[i].posY),
           (10 * bodiesList[i].mass) / 20000,
           paint,
         );
@@ -45,7 +45,7 @@ class BodyPainter extends CustomPainter {
           paint.color = Colors.black;
         }
         canvas.drawCircle(
-          Offset(bodiesList[i].pos.x, bodiesList[i].pos.y),
+          Offset(bodiesList[i].posX, bodiesList[i].posY),
           8,
           paint,
         );

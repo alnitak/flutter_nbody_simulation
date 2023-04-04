@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:n_body/body.dart';
 import 'package:n_body/n_body_ffi.dart';
 import 'package:n_body/simulation_painter.dart';
-import 'package:vector_math/vector_math.dart';
 
 import 'n_body_controller.dart';
 
@@ -50,7 +49,6 @@ class _DrawNBodyState extends State<DrawNBody> {
 
   @override
   Widget build(BuildContext context) {
-
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       if (!canBuild) {
         if (body == null) {
@@ -73,7 +71,6 @@ class _DrawNBodyState extends State<DrawNBody> {
 
     if (!canBuild) return const SizedBox.shrink();
 
-
     /// left mouse button = create body with 80000 mass
     /// right mouse button = clear added bodies
     /// center mouse button = create black hole
@@ -82,8 +79,10 @@ class _DrawNBodyState extends State<DrawNBody> {
         body!.bodiesList.add(
           Body(
             mass: 80000.0,
-            pos: Vector2(details.localPosition.dx, details.localPosition.dy),
-            spin: Vector2.zero(),
+            posX: details.localPosition.dx,
+            posY: details.localPosition.dy,
+            spinX: 0.0,
+            spinY: 0.0,
             force: 0.0,
           ),
         );
@@ -97,8 +96,10 @@ class _DrawNBodyState extends State<DrawNBody> {
         body!.bodiesList.add(
           Body(
             mass: 10000000.0,
-            pos: Vector2(details.localPosition.dx, details.localPosition.dy),
-            spin: Vector2.zero(),
+            posX: details.localPosition.dx,
+            posY: details.localPosition.dy,
+            spinX: 0.0,
+            spinY: 0.0,
             force: 0.0,
           ),
         );
@@ -111,7 +112,7 @@ class _DrawNBodyState extends State<DrawNBody> {
 }
 
 /// Widget to draw bodies using FFI
-/// 
+///
 class DrawNBodyFfi extends StatefulWidget {
   final int nBodies;
   final Function(double fps) onFps;
@@ -150,27 +151,29 @@ class _DrawNBodyFfiState extends State<DrawNBodyFfi> {
 
   @override
   Widget build(BuildContext context) {
-
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       /// at the 1st frame init bodies
       if (!canBuild) {
         double w = MediaQuery.of(context).size.width;
         double h = MediaQuery.of(context).size.height;
         NBodyController().nbodyFfi.init(
-          widget.shape.index,
-          widget.nBodies,
-          minMass,
-          maxMass,
-          w * 0.25, h * 0.25,
-          w * 0.75, h * 0.75,
-          0, 0,
-          0, 0,
-        );
+              widget.shape.index,
+              widget.nBodies,
+              minMass,
+              maxMass,
+              w * 0.25,
+              h * 0.25,
+              w * 0.75,
+              h * 0.75,
+              0,
+              0,
+              0,
+              0,
+            );
         NBodyController().nbodyFfi.setDeltaT(deltaT);
         stopwatch.start();
         canBuild = true;
-      }
-      else {
+      } else {
         bodies = NBodyController().nbodyFfi.updateBodies(nBodies);
         framesCount++;
         if (stopwatch.elapsedMilliseconds > 1000) {
@@ -189,8 +192,8 @@ class _DrawNBodyFfiState extends State<DrawNBodyFfi> {
     /// center mouse button = create black hole
     return GestureDetector(
       onTapDown: (details) {
-        NBodyController().nbodyFfi.addBody(80000.0, details.localPosition.dx,
-            details.localPosition.dy, 0, 0);
+        NBodyController().nbodyFfi.addBody(
+            80000.0, details.localPosition.dx, details.localPosition.dy, 0, 0);
       },
       onSecondaryTapDown: (details) {
         NBodyController().nbodyFfi.removeBodiesWithMassRange(10001, 10000000);
