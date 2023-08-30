@@ -1,12 +1,16 @@
+/// Here the widget to draw using Dart:ffi or plain Flutter using Float64List
+
 import 'dart:ffi' as ffi;
 
 import 'package:ffi/ffi.dart';
 import 'package:flutter/material.dart';
 import 'package:n_body/body.dart';
-import 'package:n_body/n_body_ffi.dart';
+import 'package:n_body/body_ffi.dart';
+import 'package:n_body/body_records.dart';
 import 'package:n_body/simulation_painter.dart';
 
 import 'n_body_controller.dart';
+
 
 /// delta time
 double deltaT = 0.001;
@@ -18,6 +22,98 @@ double maxMass = 6000.0;
 /// calculate fps
 final stopwatch = Stopwatch();
 int framesCount = 0;
+
+/// Widget to draw bodies using Flutter with Records
+///
+class DrawNBodyRecords extends StatefulWidget {
+  final int nBodies;
+  final Function(double fps) onFps;
+  final BodiesShape shape;
+
+  const DrawNBodyRecords({
+    Key? key,
+    required this.nBodies,
+    required this.onFps,
+    required this.shape,
+  }) : super(key: key);
+
+  @override
+  State<DrawNBodyRecords> createState() => _DrawNBodyRecordsState();
+}
+
+class _DrawNBodyRecordsState extends State<DrawNBodyRecords> {
+  NBodyRecords? body;
+  late bool canBuild;
+
+  @override
+  initState() {
+    super.initState();
+    canBuild = false;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      if (!canBuild) {
+        if (body == null) {
+          body = NBodyRecords(widget.nBodies, MediaQuery.sizeOf(context));
+          body!.init(widget.shape);
+          stopwatch.start();
+        }
+        canBuild = true;
+      } else {
+        body!.updateParams();
+        framesCount++;
+        if (stopwatch.elapsedMilliseconds > 1000) {
+          widget.onFps(framesCount.toDouble());
+          framesCount = 0;
+          stopwatch.reset();
+        }
+      }
+      setState(() {});
+    });
+
+    if (!canBuild) return const SizedBox.shrink();
+
+    /// left mouse button = create body with 80000 mass
+    /// right mouse button = clear added bodies
+    /// center mouse button = create black hole
+    return GestureDetector(
+      onTapDown: (details) {
+        body!.bodiesList.add(
+          Body(
+            mass: 80000.0,
+            posX: details.localPosition.dx,
+            posY: details.localPosition.dy,
+            spinX: 0.0,
+            spinY: 0.0,
+            force: 0.0,
+          )
+        );
+      },
+      onSecondaryTapDown: (details) {
+        while (body!.bodiesList.length > widget.nBodies) {
+          body!.bodiesList.removeLast();
+        }
+      },
+      onTertiaryTapDown: (details) {
+        body!.bodiesList.add(
+          Body(
+            mass: 10000000.0,
+            posX: details.localPosition.dx,
+            posY: details.localPosition.dy,
+            spinX: 0.0,
+            spinY: 0.0,
+            force: 0.0,
+          )
+        );
+      },
+      child: CustomPaint(
+        painter: BodyPainterRecords(bodiesList: body!.bodiesList),
+      ),
+    );
+  }
+}
 
 /// Widget to draw bodies using Flutter
 ///
@@ -52,13 +148,13 @@ class _DrawNBodyState extends State<DrawNBody> {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       if (!canBuild) {
         if (body == null) {
-          body = NBody(widget.nBodies, MediaQuery.of(context).size);
-          body?.init(widget.shape);
+          body = NBody(widget.nBodies, MediaQuery.sizeOf(context));
+          body!.init(widget.shape);
           stopwatch.start();
         }
         canBuild = true;
       } else {
-        body?.updateParams();
+        body!.updateParams();
         framesCount++;
         if (stopwatch.elapsedMilliseconds > 1000) {
           widget.onFps(framesCount.toDouble());
@@ -154,8 +250,8 @@ class _DrawNBodyFfiState extends State<DrawNBodyFfi> {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       /// at the 1st frame init bodies
       if (!canBuild) {
-        double w = MediaQuery.of(context).size.width;
-        double h = MediaQuery.of(context).size.height;
+        double w = MediaQuery.sizeOf(context).width;
+        double h = MediaQuery.sizeOf(context).height;
         NBodyController().nbodyFfi.init(
               widget.shape.index,
               widget.nBodies,

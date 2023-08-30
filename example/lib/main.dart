@@ -6,7 +6,14 @@ import 'package:n_body/body.dart';
 import 'package:n_body/draw_n_body.dart';
 import 'package:n_body/n_body_controller.dart';
 
+/// using Dart:ffi if true or Dart
 final useFfiProvider = StateProvider<bool>((ref) => false);
+
+/// using Float64List 
+final useFloat64Provider = StateProvider<bool>((ref) => true);
+
+/// using Records
+final useRecordsProvider = StateProvider<bool>((ref) => false);
 
 /// number of bodies
 final bodiesCountProvider = StateProvider<int>((ref) => 500);
@@ -61,9 +68,54 @@ class MyHomePage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     int nBodies = ref.watch(bodiesCountProvider);
     bool isFfi = ref.watch(useFfiProvider);
+    bool isFloat64 = ref.watch(useFloat64Provider);
+    bool isRecords = ref.watch(useRecordsProvider);
     ref.watch(minMassProvider);
     ref.watch(maxMassProvider);
     BodiesShape shape = ref.watch(bodiesShapeProvider);
+
+    /// use ffi, Float64List or Records drawing widget
+    Widget drawNBodyWidget;
+    if (isFfi) {
+      drawNBodyWidget = DrawNBodyFfi(
+        key: UniqueKey(),
+        nBodies: nBodies,
+        shape: shape,
+        onFps: (fps) {
+          Future(() {
+            ref.read(fpsProvider.notifier).update((state) => (state + fps) / 2);
+          });
+        },
+      );
+    } else {
+      if (isRecords) {
+        drawNBodyWidget = DrawNBodyRecords(
+          key: UniqueKey(),
+          nBodies: nBodies,
+          shape: shape,
+          onFps: (fps) {
+            Future(() {
+              ref
+                  .read(fpsProvider.notifier)
+                  .update((state) => (state + fps) / 2);
+            });
+          },
+        );
+      } else {
+        drawNBodyWidget = DrawNBody(
+          key: UniqueKey(),
+          nBodies: nBodies,
+          shape: shape,
+          onFps: (fps) {
+            Future(() {
+              ref
+                  .read(fpsProvider.notifier)
+                  .update((state) => (state + fps) / 2);
+            });
+          },
+        );
+      }
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -73,31 +125,7 @@ class MyHomePage extends ConsumerWidget {
         fit: StackFit.expand,
         children: [
           Container(
-            child: isFfi
-                ? DrawNBodyFfi(
-                    key: UniqueKey(),
-                    nBodies: nBodies,
-                    shape: shape,
-                    onFps: (fps) {
-                      Future(() {
-                        ref
-                            .read(fpsProvider.notifier)
-                            .update((state) => (state + fps) / 2);
-                      });
-                    },
-                  )
-                : DrawNBody(
-                    key: UniqueKey(),
-                    nBodies: nBodies,
-                    shape: shape,
-                    onFps: (fps) {
-                      Future(() {
-                        ref
-                            .read(fpsProvider.notifier)
-                            .update((state) => (state + fps) / 2);
-                      });
-                    },
-                  ),
+            child: drawNBodyWidget,
           ),
           Padding(
             padding: const EdgeInsets.all(8.0),
@@ -112,11 +140,47 @@ class MyHomePage extends ConsumerWidget {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Checkbox(
+                        value: isFloat64,
+                        onChanged: (value) {
+                          ref
+                              .read(useRecordsProvider.notifier)
+                              .update((state) => false);
+                          ref
+                              .read(useFfiProvider.notifier)
+                              .update((state) => false);
+                          ref
+                              .read(useFloat64Provider.notifier)
+                              .update((state) => true);
+                        },
+                      ),
+                      const Text('use FloatList '),
+                      Checkbox(
+                        value: isRecords,
+                        onChanged: (value) {
+                          ref
+                              .read(useRecordsProvider.notifier)
+                              .update((state) => true);
+                          ref
+                              .read(useFfiProvider.notifier)
+                              .update((state) => false);
+                          ref
+                              .read(useFloat64Provider.notifier)
+                              .update((state) => false);
+                        },
+                      ),
+                      const Text('use Records '),
+                      Checkbox(
                         value: isFfi,
                         onChanged: (value) {
                           ref
+                              .read(useRecordsProvider.notifier)
+                              .update((state) => false);
+                          ref
                               .read(useFfiProvider.notifier)
-                              .update((state) => !isFfi);
+                              .update((state) => true);
+                          ref
+                              .read(useFloat64Provider.notifier)
+                              .update((state) => false);
                         },
                       ),
                       const Text('use FFI     '),

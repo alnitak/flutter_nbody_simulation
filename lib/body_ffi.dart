@@ -135,7 +135,7 @@ class NBodyFfi {
       .asFunction<ffi.Pointer<BodyFfi> Function(ffi.Pointer<ffi.Int>)>();
 }
 
-class BodyFfi extends ffi.Struct {
+final class BodyFfi extends ffi.Struct {
   @ffi.Double()
   external double mass;
 

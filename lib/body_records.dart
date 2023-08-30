@@ -2,37 +2,29 @@ import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:n_body/body.dart';
 
 import 'draw_n_body.dart';
 
-class Body {
-  double mass;
-  double posX;
-  double posY;
-  double spinX;
-  double spinY;
-  double force;
+/// Using a Record instead of [Body] class, performaces decreased
+/// probably because a whole record object should be assigned for a single
+/// parameter change?
+typedef BodyType = ({
+  double mass,
+  double posX,
+  double posY,
+  double spinX,
+  double spinY,
+  double force,
+});
 
-  Body({
-    required this.mass,
-    required this.posX,
-    required this.posY,
-    required this.spinX,
-    required this.spinY,
-    required this.force,
-  });
-}
+typedef Accel = (double x, double y);
 
-enum BodiesShape {
-  rectangle,
-  circle,
-}
-
-class NBody {
+class NBodyRecords {
   final int nBodies;
   final Size size;
 
-  NBody(this.nBodies, this.size);
+  NBodyRecords(this.nBodies, this.size);
 
   /// gravitational constant
   final double G = 6.6743e-11;
@@ -104,18 +96,19 @@ class NBody {
     double fJ = 0;
     int bodiesCount = bodiesList.length;
 
-    /// Using Float64List there is a great improvement in
-    /// debug mode (2500 bodies, from 13 to 31 FPS), but
-    /// in release mode both types gives me about 20 FPS!! (less then debug mode!)
-    /// Replacing Vector2 another great improvement!
-    // List<double> accelX = List.generate(bodiesCount, (index) => 0.0);
-    // List<double> accelY = List.generate(bodiesCount, (index) => 0.0);
-    final accelX = Float64List(bodiesCount);
-    final accelY = Float64List(bodiesCount);
-
     // calculate new velocity
     /// F = G(m1m2)/R^3 (for 3D)
     /// F = G(m1m2)/R^2 (for 2D)
+
+    /// Using Record. Seems that using a List of records, doesn't improve
+    /// performaces. I think List is still a reference type hence
+    /// less performat, while Float64List a list natively a value data type.
+    /// Or maybe because I can't set a single record param but I neec to make
+    /// a whole record assignement to change it (see `accel[i] =` below).
+    /// In the `records` branch I also tried to use [bodiesList] as
+    /// a list of records
+    List<Accel> accel = List.generate(bodiesList.length, (index) => (0.0, 0.0));
+
     for (int i = 0; i < bodiesCount; ++i) {
       bodiesList[i].force = 0.0;
       for (int j = i + 1; j < bodiesCount; ++j) {
@@ -126,11 +119,8 @@ class NBody {
         fI = bodiesList[j].mass / (dist * dist);
         fJ = bodiesList[i].mass / (dist * dist);
 
-        accelX[i] -= distX * fI;
-        accelY[i] -= distY * fI;
-
-        accelX[j] += distX * fJ;
-        accelY[j] += distY * fJ;
+        accel[i] = (accel[i].$1 - (distX * fI), accel[i].$2 - (distY * fI));
+        accel[j] = (accel[j].$1 + (distX * fJ), accel[j].$2 + (distY * fJ));
 
         bodiesList[i].force += fJ;
         bodiesList[j].force += fI;
@@ -141,8 +131,8 @@ class NBody {
 
     /// calculate new position
     for (int i = 0; i < bodiesCount; ++i) {
-      bodiesList[i].spinX += accelX[i] * deltaT;
-      bodiesList[i].spinY += accelY[i] * deltaT;
+      bodiesList[i].spinX += accel[i].$1 * deltaT;
+      bodiesList[i].spinY += accel[i].$2 * deltaT;
 
       bodiesList[i].posX += bodiesList[i].spinX * deltaT;
       bodiesList[i].posY += bodiesList[i].spinY * deltaT;

@@ -1,7 +1,7 @@
 import 'dart:ffi' as ffi;
 import 'dart:io';
 
-import "n_body_ffi.dart";
+import 'body_ffi.dart';
 
 /// Controller that expose FFI
 class NBodyController {
